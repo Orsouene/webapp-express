@@ -10,7 +10,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 // importo il router
 const movieRouter = require("./routers/router");
-
+// import not-found middleware
+const notFound = require("./middlewares/NotFound");
 //Global Middleware:
 app.use(cors());
 // body parser  il body di qualunque richiesta va parsato come application/json
@@ -20,14 +21,16 @@ app.use(express.static("public"));
 app.get("/", (req, res) => {
   res.send("welcome to my home page");
 });
-
+// ROUTER API DEL FILMS
 app.use("/movies", movieRouter);
 
 // fallback
-app.all("*", (req, res) => {
-  res.status(404).json({ message: "req non valida" });
-});
+// app.all("*", (req, res) => {
+//   res.status(404).json({ message: "req non valida" });
+// });
 
+// ROUTER API DEL NOT-FOUND
+app.use(notFound);
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
