@@ -6,10 +6,13 @@ const connection = require("./connection");
 const app = express();
 // PORT
 const port = process.env.PORT || 3000;
-
+// importo il router
+const movieRouter = require("./routers/router");
 app.get("/", (req, res) => {
   res.send("welcome to my home page");
 });
+
+app.use("/movies", movieRouter);
 
 // fallback
 app.all("*", (req, res) => {
