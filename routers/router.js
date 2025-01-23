@@ -1,7 +1,11 @@
 const express = require("express");
-const routers = express.Router();
-const { index } = require("../controllers/controller");
+const router = express.Router();
+const { index, show } = require("../controllers/controller");
 
-routers.get("/", index);
+// INDEX
+router.get("/", index);
 
-module.exports = routers;
+// SHOW
+router.get("/:id", show);
+
+module.exports = router;
