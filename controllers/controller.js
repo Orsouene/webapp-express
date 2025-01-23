@@ -1,4 +1,5 @@
 const connection = require("../connection");
+const errorHandler = require("../middlewares/errorHandler");
 // INDEX
 function index(req, res) {
   const sql = "SELECT * FROM db_movie.movies;";
@@ -12,6 +13,9 @@ function index(req, res) {
 // SHOW
 function show(req, res) {
   id = parseInt(req.params.id);
+
+  // PROVA PER IL errorHandler :
+  // consol.log(id);
 
   //   Preparao la mia query dei film
   const filmSql = "SELECT * FROM movies WHERE id = ?";
