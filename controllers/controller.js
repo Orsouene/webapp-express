@@ -8,6 +8,8 @@ function index(req, res) {
     res.json(results);
   });
 }
+
+// SHOW
 function show(req, res) {
   id = parseInt(req.params.id);
 
@@ -39,4 +41,16 @@ WHERE movies.id=?`;
   });
 }
 
-module.exports = { index, show };
+// DELETE
+function destroy(req, res) {
+  const id = parseInt(req.params.id);
+  const sql = "DELETE FROM movies WHERE (`id` = '?')";
+  //   ESEGUO LA QUERY
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ err: "no film to delete" });
+    console.log(results);
+    res.sendStatus(204);
+  });
+}
+
+module.exports = { index, show, destroy };

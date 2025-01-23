@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { index, show } = require("../controllers/controller");
+const { index, show, destroy } = require("../controllers/controller");
 
 // INDEX
 router.get("/", index);
 
 // SHOW
 router.get("/:id", show);
+
+// DELETE
+router.delete("/:id", destroy);
 
 module.exports = router;
