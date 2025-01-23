@@ -1,5 +1,7 @@
 // Importo express
 const express = require("express");
+// Connessione al database
+const connection = require("./connection");
 // creao una istanza
 const app = express();
 // PORT
