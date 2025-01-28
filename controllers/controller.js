@@ -1,5 +1,4 @@
 const connection = require("../connection");
-const errorHandler = require("../middlewares/errorHandler");
 // INDEX
 function index(req, res) {
   const sql = "SELECT * FROM db_movie.movies;";
@@ -45,6 +44,28 @@ WHERE movies.id=?`;
   });
 }
 
+// Function Store
+function storeReview(req, res) {
+  // //  recupero l'id
+  const { id } = req.params;
+  // recuper oi lbody
+  const { name, vote, text } = req.body;
+  // il mio query
+  const sql =
+    "INSERT INTO reviews (name, vote,text, movie_id) VALUES (?, ?, ?, ?)";
+  // console.log("Query SQL:", sql);
+  // console.log("Dati:", [name, vote, text, id]);
+
+  // eseguo la query
+  connection.query(sql, [name, vote, text, id], (err, results) => {
+    if (err) {
+      console.error("Errore della query:", err);
+      return res.status(500).json({ error: "DB QUERY FAILED" });
+    }
+    console.log(results);
+    res.status(201).json({ message: "Review add", id: results.insertId });
+  });
+}
 // DELETE
 function destroy(req, res) {
   const id = parseInt(req.params.id);
@@ -57,4 +78,4 @@ function destroy(req, res) {
   });
 }
 
-module.exports = { index, show, destroy };
+module.exports = { index, show, storeReview, destroy };
