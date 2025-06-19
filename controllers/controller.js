@@ -1,17 +1,41 @@
+const { response } = require("express");
 const connection = require("../connection");
 // INDEX
+// INDEX
 function index(req, res) {
-  const sql = "SELECT * FROM db_movie.movies;";
-  connection.query(sql, (err, results) => {
+  const limit = 4;
+  const { page = 1 } = req.query; // Assicurati che la pagina abbia un valore di default
+  const offset = limit * (page - 1);
+
+  const sqlCount = "SELECT COUNT(*) AS `count` FROM `movies`";
+  connection.query(sqlCount, (err, results) => {
     if (err) return res.status(500).json({ error: "DB QUERY FAILED" });
-    console.log(results);
-    res.json(results);
+
+    const count = results[0].count;
+    const totalPages = Math.ceil(count / limit); // calcoliamo il numero totale di pagine
+
+    // Assicurati che la pagina richiesta non superi il totale delle pagine disponibili
+    if (page > totalPages) {
+      return res.status(400).json({ error: "Page exceeds available pages" });
+    }
+
+    const sql = "SELECT * FROM `movies` LIMIT ? OFFSET ?";
+    connection.query(sql, [limit, offset], (err, results) => {
+      if (err) return res.status(500).json({ error: "Error in server" });
+
+      const response = {
+        count,
+        numPages: totalPages, // Aggiungi il numero totale di pagine
+        items: results,
+      };
+      res.json(response);
+    });
   });
 }
 
 // SHOW
 function show(req, res) {
-  id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   // PROVA PER IL errorHandler :
   // consol.log(id);
@@ -47,17 +71,18 @@ WHERE movies.id=?`;
 // Function Store
 function storeReview(req, res) {
   // //  recupero l'id
-  const { id } = req.params;
+  // const { id } = req.params;
+  const id = parseInt(req.params.id);
   // recuper oi lbody
-  const { name, vote, text } = req.body;
+  const { name, text, vote } = req.body;
   // il mio query
   const sql =
-    "INSERT INTO reviews (name, vote,text, movie_id) VALUES (?, ?, ?, ?)";
+    "INSERT INTO reviews (name, text,vote, movie_id) VALUES (?, ?, ?, ?)";
   // console.log("Query SQL:", sql);
   // console.log("Dati:", [name, vote, text, id]);
 
   // eseguo la query
-  connection.query(sql, [name, vote, text, id], (err, results) => {
+  connection.query(sql, [name, text, vote, id], (err, results) => {
     if (err) {
       console.error("Errore della query:", err);
       return res.status(500).json({ error: "DB QUERY FAILED" });
